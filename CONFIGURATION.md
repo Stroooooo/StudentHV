@@ -66,6 +66,7 @@ Enable-PSRemoting -Force
 Set-Item WSMan:\localhost\Service\AllowUnencrypted $true
 Set-Item WSMan:\localhost\Service\Auth\Basic $true
 ```
+a helper script is in /powershell/winrm_helper.ps1
 
 The WinRM user must have permissions to run administrative PowerShell scripts that can create, delete, or manage VMs.
 
