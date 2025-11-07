@@ -1,0 +1,38 @@
+spring.application.name=api
+
+# Random code for signing auth tokens (jwt)
+jwt.secret=Iwda.......... # Should be long or else
+
+# Address for remote connection
+winrm.port=5985
+
+# Public shared drive
+iso.directory=${ISO_DIRECTORY}
+
+# LDAP and active directory
+ad.url=ldap://${AD_URL}
+ad.domain=${AD_URL}
+ad.dn=${AD_DN}
+ 
+# Dont bother with these
+spring.mvc.async.request-timeout=120000
+server.tomcat.connection-timeout=120000
+server.tomcat.threads.max=200
+server.tomcat.threads.min-spare=10
+
+# cn=admin, for exsample add ,
+# cn= then name of your admin group
+# on windows server
+ad.adminGroup=${ADMIN_GROUP}
+
+app.teams[0].serverName=SERVER1
+app.teams[0].serverAddress=${SERVER1_HOST}
+app.teams[0].serverUsername=${SERVER1_USERNAME}
+app.teams[0].serverPassword=${SERVER1_PASSWORD}
+
+# exsample extra server can have as many as you want
+# idk. Could have like 6 or 7
+app.teams[1].serverName=SERVER2
+app.teams[1].serverAddress=${SERVER2_HOST}
+app.teams[1].serverUsername=${SERVER2_USERNAME}
+app.teams[1].serverPassword=${SERVER2_PASSWORD}

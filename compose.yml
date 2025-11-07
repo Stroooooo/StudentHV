@@ -1,0 +1,24 @@
+services:
+  web:
+    build: ./website
+    ports:
+      - "3000:3000"
+    restart: always
+  
+  api:
+    build: ./api
+    ports:
+      - "8080:8080"
+    restart: always
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx:/etc/nginx:ro
+    depends_on:
+      - web
+      - api
+    restart: always
