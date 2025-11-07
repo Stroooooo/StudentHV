@@ -5,7 +5,6 @@ import {
   Server,
   ServerIcon,
 } from "lucide-react"
-import NescolLogo from "@/public/nescol-logo.png"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {
@@ -47,7 +46,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props} className="text-white">
       <SidebarHeader className="bg-[#532E80]">
         <div className="flex items-center gap-2 mt-2">
-          <Image alt="logo" src={NescolLogo} width={60} height={60} className="p-2" />
+          <Image alt="logo" src={process.env.NEXT_PUBLIC_LOGO_URL || ""} width={60} height={60} className="p-2" />
         </div>
         <div className="my-2 min-w-full border-t-[1px] border-gray-400"></div>
         {
