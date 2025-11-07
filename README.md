@@ -1,3 +1,7 @@
+<a href="#documentation">
+  <img src="assets/logo.png" alt="Logo" width="200"/>
+</a>
+
 # StudentHV Project
 This software is intended for colleges and schools to enable
 students to create manage and connect to there own hyperv vms
