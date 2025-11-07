@@ -1,6 +1,11 @@
 <a href="#documentation">
-  <img src="assets/logo.png" alt="Logo" width="200"/>
+  <img src="assets/logo.png" alt="logo" width="200"/>
 </a>
+
+<a href="#documentation" style="margin-top: 20px;">
+  <img src="assets/login.png" alt="login page"/>
+</a>
+
 
 # StudentHV Project
 This software is intended for colleges and schools to enable
