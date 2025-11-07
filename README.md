@@ -1,36 +1,44 @@
 <a href="#documentation">
-  <img src="assets/logo.png" alt="logo" width="200"/>
+  <img src="assets/logo.png" alt="StudentHV Logo" width="200"/>
 </a>
 
 <a href="#documentation" style="margin-top: 20px;">
-  <img src="assets/login.png" alt="login page"/>
+  <img src="assets/login.png" alt="StudentHV Login Page"/>
 </a>
 
-
 # StudentHV Project
-This software is intended for colleges and schools to enable
-students to create manage and connect to there own hyperv vms
-from a simple interface. This software stops students from easly
-being able to tamper with eachovers work during school time.
 
-Origanly this software was built by me for the computing floor in
-nescol but is now free and open for use for anyone to use or change
-to there liking.
+**StudentHV** is a management tool designed for colleges and schools, enabling students to create, manage, and connect to their own **Hyper-V virtual machines** from a simple web interface.  
+The system prevents students from easily tampering with each other's work during class time.
 
-With some simple adaptions this project can be changed into lots of
-things like a internal easy to use managment system for a companys
-hyperv servers.
+Originally built for the **computing floor at NESCol**, StudentHV is now free and open for anyone to use, modify, and adapt to their own environment.
 
-This project dose not require a database but one can be added at your
-own will.
+With a few simple adaptations, this project can serve as an internal management system for a company's Hyper-V servers or any other controlled lab environment.
 
-# Security
-This project is ment to run internaly with no outside connection to
-the internet. If you want to patch security flaws if you find any
-feel free to send in a pull request.
+---
 
-# Documentation
-This can be found in /docs
+## Features
 
-Thanks,
-Struan
+- Simple, user-friendly web interface for managing Hyper-V VMs  
+- Role-based user control through Active Directory integration  
+- Support for multiple Hyper-V servers  
+- WinRM-based remote PowerShell control  
+- No database required (optional to add your own)  
+
+---
+
+## Security
+
+This project is designed to run **internally** with no external internet connection.  
+If you identify a security issue, feel free to **submit a pull request** with your fix or improvement.
+
+---
+
+## Documentation
+
+Full documentation can be found in [`CONFIGURATION.md`](CONFIGURATION.md).
+
+---
+
+Thanks,  
+**Struan**
