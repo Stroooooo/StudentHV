@@ -22,7 +22,7 @@ import java.util.List;
 public class SecurityConfig {
     public final AuthMiddleware authMiddleware;
 
-    @Value("#{'${cores.authorized}'.split(',')}")
+    @Value("#{'${cores.authrized}'.split(',')}")
     private List<String> authorized;
 
     public SecurityConfig(AuthMiddleware authMiddleware) {
