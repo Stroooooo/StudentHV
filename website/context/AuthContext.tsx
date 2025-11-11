@@ -25,7 +25,11 @@ function AuthProvider({ children }: any) {
     const isAuthenticated = data?.sucsess === "true"
     console.log(data)
 
+<<<<<<< HEAD
     if (isLoading) {
+=======
+    if (!data) {
+>>>>>>> 0eede7c (New ability to filter)
         return (
         <div className='min-w-screen min-h-screen flex justify-center items-center bg-white'>
             <Spinner />

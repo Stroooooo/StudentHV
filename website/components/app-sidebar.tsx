@@ -46,7 +46,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props} className="text-white">
       <SidebarHeader className="bg-[#532E80]">
         <div className="flex items-center gap-2 mt-2">
+<<<<<<< HEAD
           <Image alt="logo" src={process.env.NEXT_PUBLIC_LOGO_URL || ""} width={60} height={60} className="p-2" />
+=======
+          <Image alt="logo" src={{src: process.env.NEXT_PUBLIC_LOGO_URL || "", width: 100, height: 200}} width={100} height={100} className="p-2" />
+>>>>>>> 0eede7c (New ability to filter)
         </div>
         <div className="my-2 min-w-full border-t-[1px] border-gray-400"></div>
         {
