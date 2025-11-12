@@ -25,15 +25,19 @@ function AuthProvider({ children }: any) {
     const isAuthenticated = data?.sucsess === "true"
     console.log(data)
 
-<<<<<<< HEAD
-    if (isLoading) {
-=======
-    if (!data) {
->>>>>>> 0eede7c (New ability to filter)
+    if (isError) {
         return (
-        <div className='min-w-screen min-h-screen flex justify-center items-center bg-white'>
-            <Spinner />
-        </div>
+            <div className='min-w-screen min-h-screen flex justify-center items-center bg-white'>
+                <p className='text-red-500'>Error loading authentication status. Please try again later.</p>
+            </div>
+        )
+    }
+
+    if (isLoading) {
+        return (
+            <div className='min-w-screen min-h-screen flex justify-center items-center bg-white'>
+                <Spinner />
+            </div>
         )
     }
 
