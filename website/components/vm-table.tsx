@@ -425,9 +425,9 @@ export default function VMTable() {
   return (
     <div>
       <div className="flex gap-2 mb-5 items-center">
-        <Button onClick={startMultiple} disabled={Object.keys(rowSelection).length == 0 || progress > 0}>Start All</Button>
-        <Button onClick={stopMultiple} disabled={Object.keys(rowSelection).length == 0 || progress > 0}>Stop All</Button>
-        <Button onClick={deleteMultiple} disabled={Object.keys(rowSelection).length == 0 || progress > 0}>Delete All</Button>
+        <Button onClick={startMultiple} disabled={Object.keys(rowSelection).length == 0 || progress > 0}>Start Selected</Button>
+        <Button onClick={stopMultiple} disabled={Object.keys(rowSelection).length == 0 || progress > 0}>Stop Selected</Button>
+        <Button onClick={deleteMultiple} disabled={Object.keys(rowSelection).length == 0 || progress > 0}>Delete Selected</Button>
         <Progress value={progress * 100 / Object.keys(rowSelection).length} className="w-[200px] ml-5" />
       </div>
       <Table>
