@@ -15,7 +15,6 @@ public class StopVMJobs {
 
     @Scheduled(cron = "0 0 1 * * ?")
     public void StopVMS() {
-        System.out.println("Running stop VMS");
         // vmService.stopAllVMs();
     }
 }

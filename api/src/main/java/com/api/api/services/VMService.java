@@ -15,6 +15,13 @@ public class VMService {
 
     @Value("${iso.directory}")
     private String isoDirectory;
+
+    @Value("${configuration.directory}")
+    private String configurationDirectory;
+
+    @Value("${harddrives.directory}")
+    private String harddrivesDirectory;
+
     private final TeamConfig teamConfig;
 
     public VMService(PowerShell powerShell, TeamConfig teamConfig) {
@@ -90,10 +97,9 @@ public class VMService {
         return powerShell.runPowerShell(command, server);
     }
 
-    public String createVM(String vmName, String path, long memorySizeGB, int processorCount, String isoPath, String networkSwitchName, String server) {
+    public String createVM(String vmName, long memorySizeGB, int processorCount, String isoPath, String networkSwitchName, String server) {
         if (
             powerShell.validatePowershell(vmName) ||
-            powerShell.validatePowershell(path) ||
             powerShell.validatePowershell(isoPath) ||
             powerShell.validatePowershell(networkSwitchName)
         ) {
@@ -101,7 +107,6 @@ public class VMService {
         }
 
         String escapedVmName = vmName.replace("'", "''");
-        String escapedPath = path.replace("'", "''");
         String escapedNetworkSwitchName = networkSwitchName != null ? networkSwitchName.replace("'", "''") : "";
         String studentNumber = vmName.split(" ")[0].replace(" ", "");
         System.out.println(studentNumber);
@@ -125,7 +130,7 @@ public class VMService {
                 "  'FILES_REMOVED' " +
                 "}; " +
                 "'CLEANUP_DONE'",
-                escapedVmName, escapedPath
+                escapedVmName, configurationDirectory
             );
             
             powerShell.runPowerShell(cleanupCommand, server);
@@ -135,20 +140,33 @@ public class VMService {
             // Create the VM
             String createCommand = String.format(
                 "$ProgressPreference='SilentlyContinue'; " +
-                "$n='%s'; $p='%s'; $m=%dGB; " +
-                "New-VM -Name $n -Path $p -MemoryStartupBytes $m -Generation 2 " +
-                "-NewVHDPath \"$p\\$n\\$n.vhdx\" -NewVHDSizeBytes 50GB | Out-Null; " +
+                "$n='%s'; $vmPath='%s'; $m=%dGB; " +
+                "New-VM -Name $n -Path $vmPath -MemoryStartupBytes $m -Generation 2 -NoVHD | Out-Null; " +
                 "Set-VM -Name $n -ProcessorCount %d; " +
                 "Set-VMFirmware -VMName $n -EnableSecureBoot Off; " +
                 "Enable-VMIntegrationService -VMName $n -Name 'Guest Service Interface'; " +
                 "'VM_CREATED'",
-                escapedVmName, escapedPath, memorySizeGB, processorCount
+                escapedVmName, configurationDirectory, memorySizeGB, processorCount
             );
-            
-            
+                        
             String result1 = powerShell.runPowerShell(createCommand, server);
             if (!result1.contains("VM_CREATED")) {
                 return "{\"error\": \"Failed to create VM\"}";
+            }
+
+            String createAndAttachVhdCommand = String.format(
+                "$ProgressPreference='SilentlyContinue'; " +
+                "$n='%s'; $hdRootPath='%s'; $vhdName='%s.vhdx'; " +
+                "$vhdFullPath = Join-Path -Path $hdRootPath -ChildPath $vhdName; " +
+                "New-VHD -Path $vhdFullPath -SizeBytes 50GB -Dynamic | Out-Null; " +
+                "Add-VMHardDiskDrive -VMName $n -Path $vhdFullPath | Out-Null; " +
+                "'VHD_CREATED_AND_ATTACHED'",
+                escapedVmName, harddrivesDirectory, escapedVmName
+            );
+
+            String result2 = powerShell.runPowerShell(createAndAttachVhdCommand, server);
+            if (!result2.contains("VHD_CREATED_AND_ATTACHED")) {
+                return "{\"error\": \"Failed to create Hard Drive\"}";
             }
 
             // Connect to virtual network
@@ -268,7 +286,7 @@ public class VMService {
     //                         "ForEach-Object { Stop-VM -Name $_.Name -Force }; " +
     //                         "Get-VM | Select-Object Name, State | ConvertTo-Json";
             
-    //         powerShell.runPowerShell(commandVh1, false);
+    //         powerShell.runPowerShell(commandVh1, "");
 
     //         String commandserver = "$ProgressPreference = 'SilentlyContinue'; " +
     //                         "Get-VM | Where-Object {$_.State -eq 'Running'} | " +

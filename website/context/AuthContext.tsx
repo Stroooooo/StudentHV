@@ -23,15 +23,6 @@ function AuthProvider({ children }: any) {
     })
 
     const isAuthenticated = data?.sucsess === "true"
-    console.log(data)
-
-    if (isError) {
-        return (
-            <div className='min-w-screen min-h-screen flex justify-center items-center bg-white'>
-                <p className='text-red-500'>Error loading authentication status. Please try again later.</p>
-            </div>
-        )
-    }
 
     if (isLoading) {
         return (

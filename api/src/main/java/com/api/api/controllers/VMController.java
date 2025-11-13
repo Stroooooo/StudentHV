@@ -115,7 +115,6 @@ public class VMController {
         if (authentication.isAuthenticated()) {
             try {
                 String vmName = (String) vmConfig.get("name");
-                String path = (String) vmConfig.getOrDefault("path", "C:\\ProgramData\\Microsoft\\Windows\\Hyper-V");
                 long memorySizeGB = ((Number) vmConfig.getOrDefault("memoryGB", 4)).longValue();
                 int processorCount = ((Number) vmConfig.getOrDefault("processors", 2)).intValue();
 
@@ -132,7 +131,7 @@ public class VMController {
                         .body("{\"error\": \"VM name is required\"}");
                 }
                 
-                String result = vmService.createVM(vmName, path, memorySizeGB, processorCount, isoPath, networkSwitchName, server);
+                String result = vmService.createVM(vmName, memorySizeGB, processorCount, isoPath, networkSwitchName, server);
                 return ResponseEntity.status(HttpStatus.CREATED).body(result);
             } catch (Exception e) {
                 e.printStackTrace();

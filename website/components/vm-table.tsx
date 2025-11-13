@@ -1,10 +1,9 @@
 import { venv } from "@/config/env"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "./ui/table"
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
 import { Button } from "./ui/button"
 import { Spinner } from "./ui/shadcn-io/spinner"
-import { AuthContext } from "@/context/AuthContext"
-import { useContext, useState } from "react"
+import { useState } from "react"
 import VmSettings from "./dialogs/vm-settings"
 import VmConnect from "./dialogs/vm-connect"
 import {
@@ -17,6 +16,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
+import { Checkbox } from "./ui/checkbox"
+import { Progress } from "@/components/ui/progress"
 
 export type Vms = {
   id: string
@@ -26,6 +27,28 @@ export type Vms = {
 }
 
 export const columns: ColumnDef<Vms>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "Name",
     header: ({ column }) => {
@@ -229,53 +252,184 @@ function bytesToSize(bytes: number, decimals = 2) {
 
 
 export default function VMTable() {
-    const [sorting, setSorting] = useState<SortingState>([])
-    const team = window.localStorage.getItem("@TEAM")
-    
-    const {data, isLoading, isError} = useQuery({ 
-        queryKey: ['vmlist'], 
-        queryFn: async () => {
-            const res = await fetch(venv.SERVER + `/vm/${team}`, {
-                method: "GET",
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
+  const [rowSelection, setRowSelection] = useState<any>({})
+  const [progress, setProgress] = useState(0)
+  const [sorting, setSorting] = useState<SortingState>([])
+  const team = window.localStorage.getItem("@TEAM")
+  
+  const {data, isLoading, isError} = useQuery({ 
+      queryKey: ['vmlist'], 
+      queryFn: async () => {
+          const res = await fetch(venv.SERVER + `/vm/${team}`, {
+              method: "GET",
+              credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json',
+              }
+          })
 
-            return res.json()
+          return res.json()
+      }
+  })
+
+  const startVMMutation = useMutation({
+      mutationFn: async (vmConfig: {
+          vmname: string
+      }) => {
+          const response = await fetch(venv.SERVER + `/vm/${team}/${vmConfig.vmname}/start`, {
+              method: "POST",
+              credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json',
+              }
+          })
+
+          if (!response.ok) {
+              throw new Error('Failed to create VM')
+          }
+
+          return response.json()
+      },
+      onSuccess: (data) => {
+          console.log("VM started successfully:", data)
+      },
+      onError: (error) => {
+          console.error("VM creation failed:", error)
+      }
+  })
+
+  const stopVMMutation = useMutation({
+      mutationFn: async (vmConfig: {
+          vmname: string
+      }) => {
+          const response = await fetch(venv.SERVER + `/vm/${team}/${vmConfig.vmname}/stop`, {
+              method: "POST",
+              credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json',
+              }
+          })
+
+          if (!response.ok) {
+              throw new Error('Failed to create VM')
+          }
+
+          return response.json()
+      },
+      onSuccess: (data) => {
+          console.log("VM started successfully:", data)
+      },
+      onError: (error) => {
+          console.error("VM creation failed:", error)
+      }
+  })
+
+  const deleteMMutation = useMutation({
+      mutationFn: async (vmConfig: {
+          vmname: string
+      }) => {
+          const response = await fetch(venv.SERVER + `/vm/${team}/${vmConfig.vmname}`, {
+              method: "DELETE",
+              credentials: 'include',
+              headers: {
+                  'Content-Type': 'application/json',
+              }
+          })
+
+          if (!response.ok) {
+              throw new Error('Failed to create VM')
+          }
+
+          return response.json()
+      },
+      onSuccess: (data) => {
+          console.log("VM started successfully:", data)
+      },
+      onError: (error) => {
+          console.error("VM creation failed:", error)
+      }
+  })
+
+  const startMultiple = () => {
+    Object.keys(rowSelection).forEach(async function(key, index) {
+      if (data[key] && rowSelection[key] == true) {
+        setProgress(index + 1)
+        
+        await startVMMutation.mutateAsync({vmname: data[key].Name})
+
+        if (index == Object.keys(rowSelection).length - 1) {
+          window.location.reload()
         }
+      }
     })
+  }
 
-    const table = useReactTable({
-        data: data || [],
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        onSortingChange: setSorting,
-        getSortedRowModel: getSortedRowModel(),
-        state: {
+  const stopMultiple = () => {
+    Object.keys(rowSelection).forEach(async function(key, index) {
+      if (data[key] && rowSelection[key] == true) {
+        setProgress(index + 1)
+
+        await stopVMMutation.mutateAsync({vmname: data[key].Name})
+
+        if (index == Object.keys(rowSelection).length - 1) {
+          window.location.reload()
+        }
+      }
+    })
+  }
+
+  const deleteMultiple = () => {
+    Object.keys(rowSelection).forEach(async function(key, index) {
+      if (data[key] && rowSelection[key] == true) {
+        setProgress(index + 1)
+
+        await deleteMMutation.mutateAsync({vmname: data[key].Name})
+
+        if (index == Object.keys(rowSelection).length - 1) {
+          window.location.reload()
+        }
+      }
+    })
+  }
+
+  const table = useReactTable({
+      data: data || [],
+      columns,
+      getCoreRowModel: getCoreRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      onSortingChange: setSorting,
+      getSortedRowModel: getSortedRowModel(),
+      onRowSelectionChange: setRowSelection,
+      state: {
         sorting,
-        },
-    })
+        rowSelection,
+      },
+  })
 
-    if (isLoading) {
-        return (
-            <div className="min-w-[200px] flex justify-center items-center gap-5 p-5">
-                <Spinner /> <h1>Could take a while (1-2 minutes)</h1>
-            </div>
-        )
-    }
+  if (isLoading) {
+      return (
+          <div className="min-w-[200px] flex justify-center items-center gap-5 p-5">
+              <Spinner /> <h1>Could take a while (1-2 minutes)</h1>
+          </div>
+      )
+  }
 
-    if (isError || !data) {
-        return (
-            <div className="min-w-[200px] flex justify-center items-center gap-5 p-5">
-                <p>Error loading VMs. Please try again.</p>
-            </div>
-        )
-    }
+  if (isError || !data) {
+      return (
+          <div className="min-w-[200px] flex justify-center items-center gap-5 p-5">
+              <p>Error loading VMs. Please try again.</p>
+          </div>
+      )
+  }
 
-    return (
+  return (
+    <div>
+      <div className="flex gap-2 mb-5 items-center">
+        <Button onClick={startMultiple} disabled={Object.keys(rowSelection).length == 0 || progress > 0}>Start All</Button>
+        <Button onClick={stopMultiple} disabled={Object.keys(rowSelection).length == 0 || progress > 0}>Stop All</Button>
+        <Button onClick={deleteMultiple} disabled={Object.keys(rowSelection).length == 0 || progress > 0}>Delete All</Button>
+        <Progress value={progress * 100 / Object.keys(rowSelection).length} className="w-[200px] ml-5" />
+      </div>
       <Table>
         <TableCaption>Built by <a className="underline text-blue-500" href="https://www.linkedin.com/in/struan-mclean-821aa427b/">Struan McLean</a></TableCaption>
         <TableHeader>
@@ -318,6 +472,7 @@ export default function VMTable() {
             </TableRow>
           )}
         </TableBody>
-      </Table>
-    )
+      </Table>      
+    </div>
+  )
 }
