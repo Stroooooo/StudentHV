@@ -110,7 +110,7 @@ export const columns: ColumnDef<Vms>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-            CPUs
+            Virtual CPUs
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
